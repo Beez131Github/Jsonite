@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "grow_gc:item/rooted_golden_carrot"
+  }
+}
