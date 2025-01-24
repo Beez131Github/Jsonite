@@ -11,6 +11,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,9 +33,24 @@ public class ModItems {
 			Item.Settings settings = new Item.Settings();
 			if (jsonObject.has("maxCount")) {
 				settings.maxCount(jsonObject.get("maxCount").getAsInt());
+				Jsonite.LOGGER.info("Set maxCount status");
 			}
 			if (jsonObject.has("fireproof") && jsonObject.get("fireproof").getAsBoolean()) {
 				settings.fireproof();
+				Jsonite.LOGGER.info("Set item fireproof status");
+			}
+			// Parse rarity
+			if (jsonObject.has("rarity")) {
+				String rarityString = jsonObject.get("rarity").getAsString().toLowerCase();
+				Rarity rarity = switch (rarityString) {
+					case "common" -> Rarity.COMMON;
+					case "uncommon" -> Rarity.UNCOMMON;
+					case "rare" -> Rarity.RARE;
+					case "epic" -> Rarity.EPIC;
+					default -> Rarity.COMMON; // Default to COMMON
+				};
+				Jsonite.LOGGER.info("Set rarity to {}", rarity);
+				settings.rarity(rarity); // Assign parsed rarity to settings
 			}
 
 			return settings;
@@ -44,6 +60,7 @@ public class ModItems {
 			return new Item.Settings();
 		}
 	}
+
 
 	/**
 	 * Register an item from a JSON file.
