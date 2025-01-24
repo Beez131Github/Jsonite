@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class Jsonite implements ModInitializer {
 	public static final String MOD_ID = "jsonite";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
@@ -27,27 +28,25 @@ public class Jsonite implements ModInitializer {
 		// Initialize the mod by detecting all mod IDs
 		System.out.println("Jsonite Mod is initializing...");
 		loadModIds();
-		ModItems.registerModItems();
-		ModBlocks.registerModBlocks();
-
 		// Debug: Print all detected mod IDs
 		MOD_IDS.forEach(modid -> System.out.println("Detected mod ID: " + modid));
+		ModItems.registerModItems();
+		ModBlocks.registerModBlocks();
 	}
-
 	/**
 	 * Loads all mod IDs from the `jsonite/` folder.
 	 */
 	private void loadModIds() {
-		Path basePath = Paths.get("config/jsonite/");
+		Path basePath = Paths.get("resourcepacks/");
 		try {
 			if (!Files.exists(basePath)) {
 				// Create the folder if it doesn't exist
 				Files.createDirectories(basePath);
-				System.out.println("Created jsonite directory: " + basePath.toAbsolutePath());
+				System.out.println("Created resourcepacks directory: " + basePath.toAbsolutePath());
 				return;
 			}
 
-			// Traverse only one level below `jsonite/`
+			// Traverse only one level below `resourcepacks/`
 			Files.list(basePath)
 				.filter(Files::isDirectory) // Only process directories
 				.forEach(modidPath -> MOD_IDS.add(modidPath.getFileName().toString()));
@@ -57,6 +56,8 @@ public class Jsonite implements ModInitializer {
 			e.printStackTrace();
 		}
 	}
+
+
 
 
 }

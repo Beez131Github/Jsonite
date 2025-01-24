@@ -3,9 +3,7 @@ package io.github.beez131github.jsonite.item;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.beez131github.jsonite.Jsonite;
-import io.github.beez131github.jsonite.block.ModBlocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.BlockItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -61,7 +59,6 @@ public class ModItems {
 		}
 	}
 
-
 	/**
 	 * Register an item from a JSON file.
 	 */
@@ -97,33 +94,38 @@ public class ModItems {
 		}
 	}
 
-
 	/**
-	 * Register all mod items from the `config/jsonite` folder.
+	 * Register all mod items from the `resourcepacks` folder.
 	 */
 	public static void registerModItems() {
 		Jsonite.LOGGER.info("Registering Mod Items for " + Jsonite.MOD_ID);
 
-		// Iterate over each detected mod ID
-		Set<String> modIds = Jsonite.MOD_IDS;
-		for (String modId : modIds) {
-			Path itemsFolder = Paths.get("config/jsonite", modId, "items");
+		Path resourcePacksPath = Paths.get("resourcepacks");
 
-			// Skip if `items` subdirectory doesn't exist
-			if (!Files.exists(itemsFolder)) {
-				Jsonite.LOGGER.warn("No items folder found for mod ID: {}", modId);
-				continue;
-			}
+		// Traverse the resourcepacks folder
+		try (Stream<Path> modFolders = Files.list(resourcePacksPath)) {
+			modFolders.filter(Files::isDirectory).forEach(modFolder -> {
+				String modId = modFolder.getFileName().toString();
 
-			// Process JSON files in the `items` subdirectory
-			try (Stream<Path> paths = Files.walk(itemsFolder, 1)) {
-				paths.filter(Files::isRegularFile)
-					.filter(path -> path.toString().endsWith(".json"))
-					.forEach(path -> registerItemFromJson(path, modId)); // Pass modId here
-			} catch (IOException e) {
-				Jsonite.LOGGER.error("Failed to load items for mod ID: {}", modId, e);
-			}
+				// Locate items folder under `data/<namespace>/items`
+				Path itemsFolder = modFolder.resolve("data").resolve(modId).resolve("items");
+
+				if (!Files.exists(itemsFolder)) {
+					Jsonite.LOGGER.warn("No items folder found for mod ID: {}", modId);
+					return;
+				}
+
+				// Process JSON files in the `items` subdirectory
+				try (Stream<Path> paths = Files.walk(itemsFolder, 1)) {
+					paths.filter(Files::isRegularFile)
+						.filter(path -> path.toString().endsWith(".json"))
+						.forEach(path -> registerItemFromJson(path, modId));
+				} catch (IOException e) {
+					Jsonite.LOGGER.error("Failed to load items for mod ID: {}", modId, e);
+				}
+			});
+		} catch (IOException e) {
+			Jsonite.LOGGER.error("Failed to traverse resourcepacks folder", e);
 		}
 	}
-
 }
