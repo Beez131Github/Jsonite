@@ -37,6 +37,18 @@ public class ModItems {
 				settings.fireproof();
 				Jsonite.LOGGER.info("Set item fireproof status");
 			}
+			if (jsonObject.has("enchantable")) {
+				int enchantableLevel = jsonObject.get("enchantable").getAsInt();
+				if (enchantableLevel == 1) {
+					settings.enchantable(enchantableLevel);
+					Jsonite.LOGGER.info("Set item enchantable to level {}", enchantableLevel);
+				} else {
+					Jsonite.LOGGER.info("Enchantable property is not set to 1, skipping.");
+				}
+			} else {
+				Jsonite.LOGGER.info("Enchantable property not found in JSON, skipping.");
+			}
+
 			// Parse rarity
 			if (jsonObject.has("rarity")) {
 				String rarityString = jsonObject.get("rarity").getAsString().toLowerCase();
