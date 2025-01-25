@@ -63,6 +63,7 @@ public class ModItems {
 				settings.rarity(rarity); // Assign parsed rarity to settings
 			}
 
+
 			return settings;
 
 		} catch (Exception e) {

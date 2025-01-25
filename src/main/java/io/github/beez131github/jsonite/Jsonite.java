@@ -1,6 +1,7 @@
 package io.github.beez131github.jsonite;
 
 import io.github.beez131github.jsonite.block.ModBlocks;
+import io.github.beez131github.jsonite.item.ModFoodComponents;
 import io.github.beez131github.jsonite.item.ModItems;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ public class Jsonite implements ModInitializer {
 		MOD_IDS.forEach(modid -> System.out.println("Detected mod ID: " + modid));
 		ModItems.registerModItems();
 		ModBlocks.registerModBlocks();
+		ModFoodComponents.registerModFoods();
 	}
 	/**
 	 * Loads all mod IDs from the `jsonite/` folder.
