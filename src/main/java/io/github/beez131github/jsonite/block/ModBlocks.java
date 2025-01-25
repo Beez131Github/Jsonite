@@ -23,14 +23,16 @@ import java.util.stream.Stream;
 public class ModBlocks {
 
 	private static void registerBlockItem(String name, Block block, String modId) {
-		Registry.register(Registries.ITEM, Identifier.of(modId, name),
-			new BlockItem(block, new Item.Settings()));
+		Identifier id = Identifier.of(modId, name);
+		RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, id);
+		Item.Settings itemSettings = new Item.Settings().key(itemKey);
+
+		Registry.register(Registries.ITEM, id,
+			new BlockItem(block, itemSettings));
 	}
 
 	private static Block registerBlock(String name, Block block, String modId, Identifier id) {
-		// First register the BlockItem
 		registerBlockItem(name, block, modId);
-		// Then register and return the Block
 		return Registry.register(Registries.BLOCK, id, block);
 	}
 
