@@ -1,36 +1,134 @@
 package io.github.beez131github.jsonite.block;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.github.beez131github.jsonite.Jsonite;
-import net.minecraft.block.*;
-import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.block.Block;
+import net.minecraft.block.AbstractBlock.Settings;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 public class ModBlocks {
 
-
-
-	private static Block registerBlockWithoutBlockItem(String name, Block block) {
-		return Registry.register(Registries.BLOCK, Identifier.of(Jsonite.MOD_ID, name), block);
-	}
-
-	private static Block registerBlock(String name, Block block) {
-		registerBlockItem(name, block);
-		return Registry.register(Registries.BLOCK, Identifier.of(Jsonite.MOD_ID, name), block);
-	}
-
-	private static void registerBlockItem(String name, Block block) {
-		Registry.register(Registries.ITEM, Identifier.of(Jsonite.MOD_ID, name),
+	private static void registerBlockItem(String name, Block block, String modId) {
+		Registry.register(Registries.ITEM, Identifier.of(modId, name),
 			new BlockItem(block, new Item.Settings()));
+	}
+
+	private static Block registerBlock(String name, Block block, String modId, Identifier id) {
+		// First register the BlockItem
+		registerBlockItem(name, block, modId);
+		// Then register and return the Block
+		return Registry.register(Registries.BLOCK, id, block);
+	}
+
+
+	private static Settings getBlockSettingsFromJson(Path jsonPath, RegistryKey<Block> key) {
+		try {
+			String jsonContent = Files.readString(jsonPath);
+			JsonObject jsonObject = JsonParser.parseString(jsonContent).getAsJsonObject();
+
+			Settings settings = Settings.create().key(key);
+
+			if (jsonObject.has("hardness")) {
+				settings.hardness(jsonObject.get("hardness").getAsFloat());
+				Jsonite.LOGGER.info("Set hardness");
+			}
+			if (jsonObject.has("resistance")) {
+				settings.resistance(jsonObject.get("resistance").getAsFloat());
+				Jsonite.LOGGER.info("Set resistance");
+			}
+			if (jsonObject.has("sounds")) {
+				String sound = jsonObject.get("sounds").getAsString().toLowerCase();
+				BlockSoundGroup soundGroup = switch (sound) {
+					case "wood" -> BlockSoundGroup.WOOD;
+					case "stone" -> BlockSoundGroup.STONE;
+					case "metal" -> BlockSoundGroup.METAL;
+					case "glass" -> BlockSoundGroup.GLASS;
+					case "sand" -> BlockSoundGroup.SAND;
+					case "gravel" -> BlockSoundGroup.GRAVEL;
+					default -> BlockSoundGroup.STONE;
+				};
+				settings.sounds(soundGroup);
+				Jsonite.LOGGER.info("Set sound group to {}", sound);
+			}
+
+			return settings;
+
+		} catch (Exception e) {
+			Jsonite.LOGGER.error("Failed to create Block.Settings from JSON: {}", jsonPath, e);
+			return Settings.create().key(key);
+		}
+	}
+
+	private static void registerBlockFromJson(Path jsonPath, String modId) {
+		Jsonite.LOGGER.info("Loading JSON file: {}", jsonPath);
+		try {
+			String jsonContent = Files.readString(jsonPath);
+			JsonObject jsonObject = JsonParser.parseString(jsonContent).getAsJsonObject();
+
+			if (!jsonObject.has("name")) {
+				Jsonite.LOGGER.error("Missing 'name' field in JSON file: {}", jsonPath);
+				return;
+			}
+
+			String name = jsonObject.get("name").getAsString();
+			Identifier id = Identifier.of(modId, name);
+
+			// Create the registry key
+			RegistryKey<Block> key = RegistryKey.of(
+				Registries.BLOCK.getKey(),
+				id
+			);
+
+			Settings settings = getBlockSettingsFromJson(jsonPath, key);
+			Block block = new Block(settings);
+
+			Block registeredBlock = registerBlock(name, block, modId, id);
+			Jsonite.LOGGER.info("Successfully registered block: {} with registry name: {}", name, registeredBlock.getTranslationKey());
+
+		} catch (Exception e) {
+			Jsonite.LOGGER.error("Failed to register block from JSON: {}", jsonPath, e);
+		}
 	}
 
 	public static void registerModBlocks() {
 		Jsonite.LOGGER.info("Registering Mod Blocks for " + Jsonite.MOD_ID);
+
+		Path resourcePacksPath = Paths.get("resourcepacks");
+
+		try (Stream<Path> modFolders = Files.list(resourcePacksPath)) {
+			modFolders.filter(Files::isDirectory).forEach(modFolder -> {
+				String modId = modFolder.getFileName().toString();
+				Path blocksFolder = modFolder.resolve("data").resolve(modId).resolve("blocks");
+
+				if (!Files.exists(blocksFolder)) {
+					Jsonite.LOGGER.warn("No blocks folder found for mod ID: {}", modId);
+					return;
+				}
+
+				try (Stream<Path> paths = Files.walk(blocksFolder, 1)) {
+					paths.filter(Files::isRegularFile)
+						.filter(path -> path.toString().endsWith(".json"))
+						.forEach(path -> registerBlockFromJson(path, modId));
+				} catch (IOException e) {
+					Jsonite.LOGGER.error("Failed to load blocks for mod ID: {}", modId, e);
+				}
+			});
+		} catch (IOException e) {
+			Jsonite.LOGGER.error("Failed to traverse resourcepacks folder", e);
+		}
 	}
 }
