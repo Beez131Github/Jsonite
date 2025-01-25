@@ -5,6 +5,7 @@
         "id": "jsonite",
         "version": "${version}",
         "metadata": {
+						"name": "Jsonite",
             "description": "Adds a system that allows mods to be made with simple JSON files",
             "contributors": {
 							"Beez131": "Owner/Developer"
