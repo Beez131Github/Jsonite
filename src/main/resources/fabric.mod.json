@@ -1,0 +1,40 @@
+{
+	"schemaVersion": 1,
+	"id": "jsonite",
+	"version": "${version}",
+	"name": "Jsonite",
+	"description": "Adds a system that allows mods to be made with simple JSON files",
+	"authors": [
+		"Beez131"
+	],
+	"contact": {
+		"homepage": ""
+	},
+	"license": "MIT",
+	"icon": "assets/jsonite/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.beez131github.jsonite.Jsonite"
+		]
+	},
+	"mixins": [
+		"jsonite.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": ">=1.21.4",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.github_releases": "https://github.com/Beez131/Jsonite",
+				"modmenu.discord": "https://discord.gg/s5RV7Z852x",
+				"modmenu.modrinth" : "https://modrinth.com/mod/jsonite"
+			}
+		}
+	}
+}
