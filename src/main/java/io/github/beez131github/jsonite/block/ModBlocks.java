@@ -25,7 +25,7 @@ public class ModBlocks {
 	private static void registerBlockItem(String name, Block block, String modId) {
 		Identifier id = Identifier.of(modId, name);
 		RegistryKey<Item> itemKey = RegistryKey.of(RegistryKeys.ITEM, id);
-		Item.Settings itemSettings = new Item.Settings().key(itemKey);
+		Item.Settings itemSettings = new Item.Settings().registryKey(itemKey);
 
 		Registry.register(Registries.ITEM, id,
 			new BlockItem(block, itemSettings));
@@ -42,7 +42,7 @@ public class ModBlocks {
 			String jsonContent = Files.readString(jsonPath);
 			JsonObject jsonObject = JsonParser.parseString(jsonContent).getAsJsonObject();
 
-			Settings settings = Settings.create().key(key);
+			Settings settings = Settings.create().registryKey(key);
 
 			if (jsonObject.has("hardness")) {
 				settings.hardness(jsonObject.get("hardness").getAsFloat());
@@ -71,7 +71,7 @@ public class ModBlocks {
 
 		} catch (Exception e) {
 			Jsonite.LOGGER.error("Failed to create Block.Settings from JSON: {}", jsonPath, e);
-			return Settings.create().key(key);
+			return Settings.create().registryKey(key);
 		}
 	}
 

@@ -94,7 +94,7 @@ public class ModItems {
 			RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, id);
 
 			// Add RegistryKey to Item.Settings
-			Item.Settings settings = getItemSettingsFromJson(jsonPath).key(key);
+			Item.Settings settings = getItemSettingsFromJson(jsonPath).registryKey(key);
 
 			// Register the item
 			Item item = new Item(settings);

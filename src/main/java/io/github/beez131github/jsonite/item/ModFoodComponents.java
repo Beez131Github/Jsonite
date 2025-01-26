@@ -41,8 +41,8 @@ public class ModFoodComponents {
 			JsonObject foodData = jsonObject.getAsJsonObject("food");
 
 			FoodComponent.Builder foodBuilder = new FoodComponent.Builder();
-			foodBuilder.hunger(foodData.get("hunger").getAsInt())
-				.saturation(foodData.get("saturation").getAsFloat());
+			foodBuilder.nutrition(foodData.get("hunger").getAsInt())
+				.saturationModifier(foodData.get("saturation").getAsFloat());
 
 			FoodComponent foodComponent = foodBuilder.build();
 			FOOD_COMPONENTS.put(name, foodComponent);
@@ -50,7 +50,7 @@ public class ModFoodComponents {
 			// Register the food item
 			Identifier id = Identifier.of(modId, name);
 			RegistryKey<Item> key = RegistryKey.of(RegistryKeys.ITEM, id);
-			Item.Settings settings = new Item.Settings().key(key).food(foodComponent);
+			Item.Settings settings = new Item.Settings().registryKey(key).food(foodComponent);
 			Registry.register(Registries.ITEM, id, new Item(settings));
 
 			Jsonite.LOGGER.info("Loaded and registered food item: {}", name);
