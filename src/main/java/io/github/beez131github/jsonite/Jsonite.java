@@ -40,7 +40,6 @@ public class Jsonite implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		ModFoodComponents.registerModFoods();
 		ModWeapons.registerModWeapons();
-		JsonitePackTracker.hasJsoniteContent();
 	}
 	/**
 	 * Loads all mod IDs from the `jsonite/` folder.
