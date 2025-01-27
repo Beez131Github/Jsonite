@@ -9,8 +9,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class JsonitePackTracker {
-    private static final Map<String, Boolean> PACKS_WITH_JSONITE = new HashMap<>();
-
     public static boolean hasJsoniteContent() {
         Path resourcePacksPath = Paths.get("resourcepacks");
         try (Stream<Path> modFolders = Files.list(resourcePacksPath)) {
@@ -32,7 +30,8 @@ public class JsonitePackTracker {
                     if (hasWeapons) Jsonite.LOGGER.info("- Contains custom weapons");
                     if (hasFoods) Jsonite.LOGGER.info("- Contains custom foods");
                 }
-                return true;
+                Jsonite.LOGGER.info(String.valueOf(hasContent));
+                return hasContent;
             });
         } catch (IOException e) {
             Jsonite.LOGGER.error("Failed to scan resource packs", e);
