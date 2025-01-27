@@ -14,10 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class JsonitePackManagerMixin {
     @Inject(method = "disable", at = @At("HEAD"), cancellable = true)
     private void onDisable(String profile, CallbackInfoReturnable<Boolean> cir) {
+        Jsonite.LOGGER.info("MIXIN TEST - This should appear in logs");
         Jsonite.LOGGER.info("Running pack locker", profile);
         if (JsonitePackTracker.hasJsoniteContent()) {
             Jsonite.LOGGER.info("Preventing disable of pack: {}", profile);
             cir.setReturnValue(false);
         }
     }
+
 }
