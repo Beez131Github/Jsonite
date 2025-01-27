@@ -1,5 +1,6 @@
 package io.github.beez131github.jsonite.mixin;
 
+import org.spongepowered.asm.mixin.Debug;
 import io.github.beez131github.jsonite.Jsonite;
 import io.github.beez131github.jsonite.JsonitePackTracker;
 import net.minecraft.resource.ResourcePackManager;
@@ -8,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Debug(export = true)
 @Mixin(ResourcePackManager.class)
 public class JsonitePackManagerMixin {
     @Inject(method = "disable", at = @At("HEAD"), cancellable = true)
