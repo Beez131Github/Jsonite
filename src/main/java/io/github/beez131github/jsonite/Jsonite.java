@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 
 public class Jsonite implements ModInitializer {
@@ -39,6 +40,7 @@ public class Jsonite implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		ModFoodComponents.registerModFoods();
 		ModWeapons.registerModWeapons();
+		scanPacks();
 	}
 	/**
 	 * Loads all mod IDs from the `jsonite/` folder.
@@ -63,7 +65,31 @@ public class Jsonite implements ModInitializer {
 			e.printStackTrace();
 		}
 	}
+	public static void scanPacks() {
+		Path resourcePacksPath = Paths.get("resourcepacks");
 
+		try (Stream<Path> modFolders = Files.list(resourcePacksPath)) {
+			modFolders.filter(Files::isDirectory).forEach(packPath -> {
+				String packId = packPath.getFileName().toString();
+				Path dataPath = packPath.resolve("data").resolve(packId);
+
+				boolean hasItems = Files.exists(dataPath.resolve("items"));
+				boolean hasBlocks = Files.exists(dataPath.resolve("blocks"));
+				boolean hasWeapons = Files.exists(dataPath.resolve("weapons"));
+				boolean hasFoods = Files.exists(dataPath.resolve("foods"));
+
+				if (hasItems || hasBlocks || hasWeapons || hasFoods) {
+                    Jsonite.LOGGER.info("Found Jsonite content in pack: {}", packId);
+					if (hasItems) Jsonite.LOGGER.info("- Contains custom items");
+					if (hasBlocks) Jsonite.LOGGER.info("- Contains custom blocks");
+					if (hasWeapons) Jsonite.LOGGER.info("- Contains custom weapons");
+					if (hasFoods) Jsonite.LOGGER.info("- Contains custom foods");
+				}
+			});
+		} catch (IOException e) {
+			Jsonite.LOGGER.error("Failed to scan resource packs", e);
+		}
+	}
 
 
 
