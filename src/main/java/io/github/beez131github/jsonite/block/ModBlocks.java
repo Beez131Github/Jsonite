@@ -18,9 +18,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ModBlocks {
+
+	private static final Map<Identifier, Block> REGISTERED_BLOCKS = new HashMap<>();
 
 	private static void registerBlockItem(String name, Block block, String modId) {
 		Identifier id = Identifier.of(modId, name);
@@ -106,7 +110,7 @@ public class ModBlocks {
 		}
 	}
 
-	public static void registerModBlocks() {
+	public static void registerModBlocks(String packId) {
 		Jsonite.LOGGER.info("Registering Mod Blocks for " + Jsonite.MOD_ID);
 
 		Path resourcePacksPath = Paths.get("resourcepacks");
@@ -132,5 +136,9 @@ public class ModBlocks {
 		} catch (IOException e) {
 			Jsonite.LOGGER.error("Failed to traverse resourcepacks folder", e);
 		}
+	}
+	public static void clearRegisteredBlocks() {
+		REGISTERED_BLOCKS.clear();
+		Jsonite.LOGGER.info("Cleared all registered blocks");
 	}
 }

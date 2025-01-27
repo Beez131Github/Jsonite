@@ -118,7 +118,7 @@ public class ModWeapons {
 	}
 
 
-	public static void registerModWeapons() {
+	public static void registerModWeapons(String packId) {
 		Path resourcePacksPath = Paths.get("resourcepacks");
 
 		try (Stream<Path> modFolders = Files.list(resourcePacksPath)) {
@@ -143,7 +143,8 @@ public class ModWeapons {
 		}
 	}
 
-	public static Item getWeapon(String id) {
-		return REGISTERED_WEAPONS.get(id);
+	public static void clearRegisteredWeapons() {
+		REGISTERED_WEAPONS.clear();
+		Jsonite.LOGGER.info("Cleared all registered weapons");
 	}
 }

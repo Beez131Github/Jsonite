@@ -5,6 +5,9 @@ import io.github.beez131github.jsonite.item.ModFoodComponents;
 import io.github.beez131github.jsonite.item.ModItems;
 import io.github.beez131github.jsonite.item.ModWeapons;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.resource.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +35,7 @@ public class Jsonite implements ModInitializer {
 		loadModIds();
 		// Debug: Print all detected mod IDs
 		MOD_IDS.forEach(modid -> System.out.println("Detected mod ID: " + modid));
-		ModItems.registerModItems();
-		ModBlocks.registerModBlocks();
-		ModFoodComponents.registerModFoods();
-		ModWeapons.registerModWeapons();
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener((IdentifiableResourceReloadListener) new ResourceHandler());
 	}
 	/**
 	 * Loads all mod IDs from the `jsonite/` folder.

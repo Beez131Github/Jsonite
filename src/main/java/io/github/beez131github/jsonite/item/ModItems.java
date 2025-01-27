@@ -15,11 +15,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class ModItems {
-
+	private static final Map<Identifier, Item> REGISTERED_ITEMS = new HashMap<>();
 	/**
 	 * Parse Item.Settings from a JSON file.
 	 */
@@ -110,7 +111,7 @@ public class ModItems {
 	/**
 	 * Register all mod items from the `resourcepacks` folder.
 	 */
-	public static void registerModItems() {
+	public static void registerModItems(String packId) {
 		Jsonite.LOGGER.info("Registering Mod Items for " + Jsonite.MOD_ID);
 
 		Path resourcePacksPath = Paths.get("resourcepacks");
@@ -141,4 +142,38 @@ public class ModItems {
 			Jsonite.LOGGER.error("Failed to traverse resourcepacks folder", e);
 		}
 	}
+	// Clear items for a specific mod ID
+	public static void clearModItems(String modId) {
+		REGISTERED_ITEMS.entrySet().removeIf(entry ->
+				entry.getKey().getNamespace().equals(modId)
+		);
+	}
+
+	// Reload items for a specific mod ID
+	public static void reloadModItems(String modId) {
+		clearModItems(modId);
+
+		// Register items only for this mod ID
+		Path resourcePacksPath = Paths.get("resourcepacks")
+				.resolve(modId)
+				.resolve("data")
+				.resolve(modId)
+				.resolve("items");
+
+		if (Files.exists(resourcePacksPath)) {
+			try (Stream<Path> paths = Files.walk(resourcePacksPath, 1)) {
+				paths.filter(Files::isRegularFile)
+						.filter(path -> path.toString().endsWith(".json"))
+						.forEach(path -> registerItemFromJson(path, modId));
+			} catch (IOException e) {
+				Jsonite.LOGGER.error("Failed to reload items for mod ID: {}", modId, e);
+			}
+		}
+	}
+	public static void clearRegisteredItems() {
+		REGISTERED_ITEMS.clear();
+		Jsonite.LOGGER.info("Cleared all registered items");
+	}
+
+
 }
