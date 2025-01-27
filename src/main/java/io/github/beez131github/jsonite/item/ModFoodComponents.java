@@ -60,7 +60,7 @@ public class ModFoodComponents {
 		}
 	}
 
-	public static void registerModFoods(String packId) {
+	public static void registerModFoods() {
 		Jsonite.LOGGER.info("Registering Mod Foods for " + Jsonite.MOD_ID);
 
 		Path resourcePacksPath = Paths.get("resourcepacks");
@@ -87,11 +87,6 @@ public class ModFoodComponents {
 		} catch (IOException e) {
 			Jsonite.LOGGER.error("Failed to traverse resourcepacks folder", e);
 		}
-	}
-	public static void clearRegisteredFoods() {
-		FOOD_COMPONENTS.clear();
-		CONSUMABLE_COMPONENTS.clear();
-		Jsonite.LOGGER.info("Cleared all registered food items");
 	}
 
 }

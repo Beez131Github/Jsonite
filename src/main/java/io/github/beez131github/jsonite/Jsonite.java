@@ -35,7 +35,10 @@ public class Jsonite implements ModInitializer {
 		loadModIds();
 		// Debug: Print all detected mod IDs
 		MOD_IDS.forEach(modid -> System.out.println("Detected mod ID: " + modid));
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener((IdentifiableResourceReloadListener) new ResourceHandler());
+		ModItems.registerModItems();
+		ModBlocks.registerModBlocks();
+		ModFoodComponents.registerModFoods();
+		ModWeapons.registerModWeapons();
 	}
 	/**
 	 * Loads all mod IDs from the `jsonite/` folder.

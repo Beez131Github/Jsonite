@@ -111,7 +111,7 @@ public class ModItems {
 	/**
 	 * Register all mod items from the `resourcepacks` folder.
 	 */
-	public static void registerModItems(String packId) {
+	public static void registerModItems() {
 		Jsonite.LOGGER.info("Registering Mod Items for " + Jsonite.MOD_ID);
 
 		Path resourcePacksPath = Paths.get("resourcepacks");
@@ -170,10 +170,5 @@ public class ModItems {
 			}
 		}
 	}
-	public static void clearRegisteredItems() {
-		REGISTERED_ITEMS.clear();
-		Jsonite.LOGGER.info("Cleared all registered items");
-	}
-
 
 }

@@ -110,7 +110,7 @@ public class ModBlocks {
 		}
 	}
 
-	public static void registerModBlocks(String packId) {
+	public static void registerModBlocks() {
 		Jsonite.LOGGER.info("Registering Mod Blocks for " + Jsonite.MOD_ID);
 
 		Path resourcePacksPath = Paths.get("resourcepacks");
@@ -136,9 +136,5 @@ public class ModBlocks {
 		} catch (IOException e) {
 			Jsonite.LOGGER.error("Failed to traverse resourcepacks folder", e);
 		}
-	}
-	public static void clearRegisteredBlocks() {
-		REGISTERED_BLOCKS.clear();
-		Jsonite.LOGGER.info("Cleared all registered blocks");
 	}
 }
